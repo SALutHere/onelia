@@ -7,12 +7,12 @@ import (
 )
 
 type RoutePartDTOResponse struct {
-	ID              uuid.UUID       `json:"id"`
+	ID              uuid.UUID       `json:"id"               example:"bd6bc4ad-cfcb-41b6-9e2c-adf3cbe21838"`
 	FromCity        CityDTOResponse `json:"from_city"`
 	ToCity          CityDTOResponse `json:"to_city"`
-	TransportType   string          `json:"transport_type"`
-	DurationMinutes int             `json:"duration_minutes"`
-	Price           int64           `json:"price"`
+	TransportType   string          `json:"transport_type"   example:"train"`
+	DurationMinutes int             `json:"duration_minutes" example:"360"`
+	Price           int64           `json:"price"            example:"250000"`
 }
 
 func RoutePartDTOFromDomain(part domain.RoutePart) RoutePartDTOResponse {

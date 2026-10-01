@@ -1,0 +1,150 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Onelia Best Route Finder application REST-API scheme",
+        "title": "Golang Onelia Best Route Finder API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:5050",
+    "basePath": "/api/v1",
+    "paths": {
+        "/routes": {
+            "get": {
+                "description": "Получить топ 3 лучших маршрутов по времени или по стоимости",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "routes"
+                ],
+                "summary": "Получить до трёх лучших маршрутов",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Город отправления по маршруту",
+                        "name": "from_city",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Город прибытия по маршруту",
+                        "name": "to_city",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Критерий определения лучших маршрутов: `time` (по умолчанию) или `price`",
+                        "name": "sort",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешное получение лучших маршрутов",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_SALutHere_onelia_internal_routes_transport_http_dto.RouteDTOResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_SALutHere_onelia_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "City not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_SALutHere_onelia_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_SALutHere_onelia_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "github_com_SALutHere_onelia_internal_core_transport_http_response.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "full error text"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "short human-readable message"
+                }
+            }
+        },
+        "github_com_SALutHere_onelia_internal_routes_transport_http_dto.CityDTOResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "fa1c8a32-2229-4ba7-843a-0196ebc1caa7"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Berlin"
+                }
+            }
+        },
+        "github_com_SALutHere_onelia_internal_routes_transport_http_dto.RouteDTOResponse": {
+            "type": "object",
+            "properties": {
+                "parts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_SALutHere_onelia_internal_routes_transport_http_dto.RoutePartDTOResponse"
+                    }
+                },
+                "total_duration_minutes": {
+                    "type": "integer",
+                    "example": 560
+                },
+                "total_price": {
+                    "type": "integer",
+                    "example": 550000
+                }
+            }
+        },
+        "github_com_SALutHere_onelia_internal_routes_transport_http_dto.RoutePartDTOResponse": {
+            "type": "object",
+            "properties": {
+                "duration_minutes": {
+                    "type": "integer",
+                    "example": 360
+                },
+                "from_city": {
+                    "$ref": "#/definitions/github_com_SALutHere_onelia_internal_routes_transport_http_dto.CityDTOResponse"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "bd6bc4ad-cfcb-41b6-9e2c-adf3cbe21838"
+                },
+                "price": {
+                    "type": "integer",
+                    "example": 250000
+                },
+                "to_city": {
+                    "$ref": "#/definitions/github_com_SALutHere_onelia_internal_routes_transport_http_dto.CityDTOResponse"
+                },
+                "transport_type": {
+                    "type": "string",
+                    "example": "train"
+                }
+            }
+        }
+    }
+}
