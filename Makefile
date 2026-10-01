@@ -9,15 +9,15 @@ export PROJECT_ROOT=${shell pwd}
 
 # Сценарии работы с окружением
 
-## Поднять окружение
+## Поднять контейнер с PostgreSQL
 env-up:
 	@docker compose up -d onelia-postgres
 
-## Остановить окружение
+## Остановить контейнер с PostgreSQL
 env-down:
 	@docker compose down onelia-postgres
 
-## Очистить окружение
+## Остановить и очистить контейнер с PostgreSQL
 env-cleanup:
 	@read -p "Вы действительно хотите очистить все volume-файлы окружения? Данные будут утеряны. [y/n]: " ans; \
 	if [ $$ans = "y" ]; then \
@@ -69,3 +69,33 @@ migrate-action:
 		-path /migrations \
 		-database postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@onelia-postgres:5432/${POSTGRES_DB}?sslmode=disable \
 		"$(action)"
+
+
+# Очистка логов
+logs-cleanup:
+	@read -p "Вы действительно хотите очистить все log-файлы? Логи будут утеряны. [y/n]: " ans; \
+	if [ $$ans = "y" ]; then \
+		rm -rf ${PROJECT_ROOT}/out/logs && \
+		echo "Файлы логов очищены"; \
+	else \
+		echo "Очистка логов отменена"; \
+	fi
+
+
+# Сценарии работы с приложением
+
+## Запустить приложение без контейнера
+onelia-run:
+	@export LOGGER_FOLDER=${PROJECT_ROOT}/out/logs && \
+	export POSTGRES_HOST=localhost && \
+	export POSTGRES_PORT=5434 && \
+	go mod tidy && \
+	go run ${PROJECT_ROOT}/cmd/onelia/main.go
+
+## Поднять контейнер с приложением
+onelia-deploy:
+	@docker compose up -d --build onelia
+
+## Остановить контейнер с приложением
+onelia-undeploy:
+	@docker compose down onelia
