@@ -18,8 +18,15 @@ import (
 	routes_service "github.com/SALutHere/onelia/internal/routes/service"
 	routes_transport_http "github.com/SALutHere/onelia/internal/routes/transport/http"
 	"go.uber.org/zap"
+
+	_ "github.com/SALutHere/onelia/docs"
 )
 
+// @title		Golang Onelia Best Route Finder API
+// @version		1.0
+// @description	Onelia Best Route Finder application REST-API scheme
+// @host		localhost:5050
+// @BasePath	/api/v1
 func main() {
 	cfg := core_config.NewConfigMust()
 	time.Local = cfg.TimeZone
@@ -77,6 +84,7 @@ func run(ctx context.Context) error {
 	httpServer.RegisterAPIRouters(
 		apiVersionRouterV1,
 	)
+	httpServer.RegisterSwagger()
 	if err := httpServer.Run(ctx); err != nil {
 		logger.Fatal("HTTP server run error", zap.Error(err))
 	}

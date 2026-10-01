@@ -7,8 +7,8 @@ import (
 )
 
 type CityDTOResponse struct {
-	ID   uuid.UUID `json:"id"`
-	Name string    `json:"name"`
+	ID   uuid.UUID `json:"id"   example:"fa1c8a32-2229-4ba7-843a-0196ebc1caa7"`
+	Name string    `json:"name" example:"Berlin"`
 }
 
 func CityDTOFromDomain(city domain.City) CityDTOResponse {

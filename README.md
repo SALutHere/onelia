@@ -59,6 +59,14 @@ make env-cleanup
 sudo make logs-cleanup
 ```
 
+## Доступ к документации API
+
+Swagger-документация после запуска проекта будет доступна по адресу:
+
+```
+http://localhost:5050/swagger/index.html
+```
+
 ## Поиск маршрутов
 
 `GET /api/v1/routes` принимает query-параметры:

@@ -99,3 +99,15 @@ onelia-deploy:
 ## Остановить контейнер с приложением
 onelia-undeploy:
 	@docker compose down onelia
+
+
+# Сценарии работы со Swagger
+
+## Сгенерировать файлы документации
+swagger-gen:
+	@docker compose run --rm swagger \
+		init \
+		-g cmd/onelia/main.go \
+		-o docs \
+		--parseInternal \
+		--parseDependency
