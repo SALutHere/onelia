@@ -9,18 +9,10 @@ type RouteDTOResponse struct {
 }
 
 func RouteDTOFromDomain(route domain.Route) RouteDTOResponse {
-	var totalDuration int
-	var totalPrice int64
-
-	for _, part := range route.Parts {
-		totalDuration += part.DurationMinutes
-		totalPrice += part.Price
-	}
-
 	return RouteDTOResponse{
 		Parts:                RoutePartsDTOFromDomains(route.Parts),
-		TotalDurationMinutes: totalDuration,
-		TotalPrice:           totalPrice,
+		TotalDurationMinutes: route.TotalDurationMinutes,
+		TotalPrice:           route.TotalPrice,
 	}
 }
 

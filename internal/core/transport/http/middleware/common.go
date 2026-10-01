@@ -1,7 +1,6 @@
 package core_http_middleware
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 	"uuid"
@@ -24,7 +23,6 @@ func CORS(allowedOriginsList []string) Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			origin := r.Header.Get("Origin")
-			fmt.Println("Origin:", origin)
 
 			if _, ok := allowedOrigins[origin]; ok {
 				w.Header().Set("Access-Control-Allow-Origin", origin)

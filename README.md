@@ -25,7 +25,6 @@
 | Логгер                         | `go.uber.org/zap`                        | `1.28.0`   |
 | Пул подключений к PostgreSQL   | `github.com/jackc/pgx/v5`                | `5.11.0`   |
 | Работа с переменными окружения | `github.com/kelseyhightower/envconfig`   | `1.4.0`    |
-| Валидация заполнения структур  | `github.com/go-playground/validator/v10` | `10.30.5`  |
 
 
 ## Поиск маршрутов

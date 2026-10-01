@@ -17,13 +17,3 @@ func CityDTOFromDomain(city domain.City) CityDTOResponse {
 		Name: city.Name,
 	}
 }
-
-func CitiesDTOFromDomains(cities []domain.City) []CityDTOResponse {
-	citiesDTO := make([]CityDTOResponse, len(cities))
-
-	for i, city := range cities {
-		citiesDTO[i] = CityDTOFromDomain(city)
-	}
-
-	return citiesDTO
-}

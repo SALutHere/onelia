@@ -62,33 +62,6 @@ func (p *Pool) Query(
 	}, nil
 }
 
-func (p *Pool) QueryRow(
-	ctx context.Context,
-	sql string,
-	args ...any,
-) core_postgres_pool.Row {
-	row := p.Pool.QueryRow(ctx, sql, args...)
-
-	return pgxRow{
-		Row: row,
-	}
-}
-
-func (p *Pool) Exec(
-	ctx context.Context,
-	sql string,
-	arguments ...any,
-) (core_postgres_pool.CommandTag, error) {
-	tag, err := p.Pool.Exec(ctx, sql, arguments...)
-	if err != nil {
-		return nil, err
-	}
-
-	return pgxCommandTag{
-		CommandTag: tag,
-	}, nil
-}
-
 func (p *Pool) OpTimeout() time.Duration {
 	return p.opTimeout
 }
