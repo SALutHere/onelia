@@ -1,1 +1,124 @@
 # onelia
+
+## Задание на проект
+
+> Создайте на Go HTTP-сервис поиска маршрутов между городами.
+> 
+> Сгенерируйте тестовую транспортную сеть и сохраните её в выбранной базе данных. Для каждого участка укажите города отправления и прибытия, вид транспорта, время в пути и стоимость. Поиск должен использовать сохранённые данные.
+> 
+> По двум городам верните до трёх лучших маршрутов: последовательность участков, общее время и стоимость. Разрешены максимум две пересадки; повторное посещение города запрещено. Расписания и ожидание транспорта не учитываем.
+
+## Технологии
+
+| Назначение                      | Технология        | Версия   |
+| ------------------------------- | ----------------- | -------- |
+| Язык программирования           | `Go`              | `1.27.1` |
+| База данных                     | `PostgreSQL`      | `18`     |
+| Контейнеризация                 | `Docker Compose`  | `5.5.1`  |
+| Управление рутинными сценариями | `make` (Makefile) | `4.6`    |
+
+## Основные библиотеки Go
+
+| Назначение                     | Библиотека                               | Версия     |
+| ------------------------------ | ---------------------------------------- | ---------- |
+| HTTP-сервер                    | `net/http`                               | встроенная |
+| Логгер                         | `go.uber.org/zap`                        | `1.28.0`   |
+| Пул подключений к PostgreSQL   | `github.com/jackc/pgx/v5`                | `5.11.0`   |
+| Генерация UUID                 | `github.com/google/uuid`                 | `1.6.0`    |
+| Работа с переменными окружения | `github.com/kelseyhightower/envconfig`   | `1.4.0`    |
+| Валидация заполнения структур  | `github.com/go-playground/validator/v10` | `10.30.5`  |
+
+
+## Описание тестовых данных
+
+### Города
+#1 - Moscow  
+#2 - Saint Petersburg  
+#3 - Nizhny Novgorod  
+#4 - Kazan  
+#5 - Samara  
+#6 - Ufa  
+#7 - Perm  
+#8 - Yekaterinburg  
+#9 - Chelyabinsk  
+#10 - Volgograd
+
+### Маршруты
+
+```
+Moscow
+├── #1  → Saint Petersburg   train   240 мин   4500 ₽
+├── #2  → Saint Petersburg   plane    90 мин   8000 ₽
+├── #5  → Nizhny Novgorod    train   230 мин   3000 ₽
+├── #6  → Nizhny Novgorod    bus     390 мин   1800 ₽
+├── #9  → Kazan              train   690 мин   4200 ₽
+├── #10 → Kazan              plane   100 мин   7500 ₽
+├── #41 → Samara             plane   105 мин   7000 ₽
+├── #43 → Ufa                plane   120 мин   8200 ₽
+├── #45 → Yekaterinburg      plane   145 мин   9500 ₽
+├── #47 → Volgograd          train  1080 мин   3800 ₽
+└── #48 → Volgograd          plane   110 мин   7200 ₽
+
+Saint Petersburg
+├── #3 → Moscow              train   240 мин   4500 ₽
+└── #4 → Moscow              plane    90 мин   8000 ₽
+
+Nizhny Novgorod
+├── #7  → Moscow             train   230 мин   3000 ₽
+├── #8  → Moscow             bus     390 мин   1800 ₽
+├── #13 → Kazan              train   360 мин   2400 ₽
+└── #14 → Kazan              bus     430 мин   1500 ₽
+
+Kazan
+├── #11 → Moscow             train   690 мин   4200 ₽
+├── #12 → Moscow             plane   100 мин   7500 ₽
+├── #15 → Nizhny Novgorod    train   360 мин   2400 ₽
+├── #16 → Nizhny Novgorod    bus     430 мин   1500 ₽
+├── #17 → Samara             train   330 мин   2300 ₽
+├── #18 → Samara             bus     420 мин   1500 ₽
+├── #25 → Ufa                train   810 мин   3500 ₽
+└── #55 → Yekaterinburg      plane    95 мин   6800 ₽
+
+Samara
+├── #19 → Kazan              train   330 мин   2300 ₽
+├── #20 → Kazan              bus     420 мин   1500 ₽
+├── #21 → Ufa                train   480 мин   3000 ₽
+├── #22 → Ufa                bus     540 мин   1900 ₽
+├── #42 → Moscow             plane   105 мин   7000 ₽
+├── #52 → Volgograd          train   720 мин   2900 ₽
+└── #53 → Chelyabinsk        train   900 мин   3600 ₽
+
+Ufa
+├── #23 → Samara             train   480 мин   3000 ₽
+├── #24 → Samara             bus     540 мин   1900 ₽
+├── #26 → Kazan              train   810 мин   3500 ₽
+├── #27 → Perm               train   540 мин   3200 ₽
+├── #28 → Perm               bus     600 мин   2100 ₽
+├── #35 → Yekaterinburg      plane    75 мин   6000 ₽
+└── #44 → Moscow             plane   120 мин   8200 ₽
+
+Perm
+├── #29 → Ufa                train   540 мин   3200 ₽
+├── #30 → Ufa                bus     600 мин   2100 ₽
+├── #31 → Yekaterinburg      train   300 мин   2200 ₽
+└── #32 → Yekaterinburg      bus     360 мин   1400 ₽
+
+Yekaterinburg
+├── #33 → Perm               train   300 мин   2200 ₽
+├── #34 → Perm               bus     360 мин   1400 ₽
+├── #36 → Ufa                plane    75 мин   6000 ₽
+├── #37 → Chelyabinsk        train   210 мин   1600 ₽
+├── #38 → Chelyabinsk        bus     180 мин   1100 ₽
+├── #46 → Moscow             plane   145 мин   9500 ₽
+└── #56 → Kazan              plane    95 мин   6800 ₽
+
+Chelyabinsk
+├── #39 → Yekaterinburg      train   210 мин   1600 ₽
+├── #40 → Yekaterinburg      bus     180 мин   1100 ₽
+└── #54 → Samara             train   900 мин   3600 ₽
+
+Volgograd
+├── #49 → Moscow             train  1080 мин   3800 ₽
+├── #50 → Moscow             plane   110 мин   7200 ₽
+└── #51 → Samara             train   720 мин   2900 ₽
+```
