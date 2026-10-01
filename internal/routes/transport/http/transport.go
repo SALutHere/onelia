@@ -2,7 +2,6 @@ package routes_transport_http
 
 import (
 	"context"
-	"uuid"
 
 	"github.com/SALutHere/onelia/internal/core/domain"
 )
@@ -14,9 +13,8 @@ type RoutesHTTPHandler struct {
 type RoutesService interface {
 	GetBestRoutes(
 		ctx context.Context,
-		FromCityID uuid.UUID,
-		ToCityID uuid.UUID,
-		Sort *domain.SortType,
+		fromCity, toCity string,
+		order *domain.SortType,
 	) ([]domain.Route, error)
 }
 

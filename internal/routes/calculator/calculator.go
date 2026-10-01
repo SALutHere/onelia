@@ -9,8 +9,9 @@ import (
 )
 
 type RoutesCalculator struct {
-	cities   map[uuid.UUID]domain.City
-	outgoing map[uuid.UUID][]domain.Segment
+	cities       map[uuid.UUID]domain.City
+	citiesByName map[string]uuid.UUID
+	outgoing     map[uuid.UUID][]domain.Segment
 }
 
 type RoutesRepository interface {
@@ -33,11 +34,13 @@ func NewRoutesCalculator(
 	}
 
 	rc := &RoutesCalculator{
-		cities:   make(map[uuid.UUID]domain.City, len(cities)),
-		outgoing: make(map[uuid.UUID][]domain.Segment),
+		cities:       make(map[uuid.UUID]domain.City, len(cities)),
+		citiesByName: make(map[string]uuid.UUID, len(cities)),
+		outgoing:     make(map[uuid.UUID][]domain.Segment),
 	}
 	for _, city := range cities {
 		rc.cities[city.ID] = city
+		rc.citiesByName[city.Name] = city.ID
 	}
 	for _, segment := range segments {
 		if _, ok := rc.cities[segment.FromCityID]; !ok {

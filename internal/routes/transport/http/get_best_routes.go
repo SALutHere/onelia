@@ -16,27 +16,27 @@ func (h *RoutesHTTPHandler) GetBestRoutes(w http.ResponseWriter, r *http.Request
 	log := core_logger.FromContext(ctx)
 	responseHandler := core_http_response.NewHTTPResponseHandler(log, w)
 
-	fromCityID, err := core_http_request.GetRequiredUUIDQueryParam(r, "from_city_id")
+	fromCity, err := core_http_request.GetRequiredStringQueryParam(r, "from_city")
 	if err != nil {
 		responseHandler.ErrorResponse(
 			err,
-			"failed to get origin city path value",
+			"failed to get origin city query parameter",
 		)
 		return
 	}
 
-	toCityID, err := core_http_request.GetRequiredUUIDQueryParam(r, "to_city_id")
+	toCity, err := core_http_request.GetRequiredStringQueryParam(r, "to_city")
 	if err != nil {
 		responseHandler.ErrorResponse(
 			err,
-			"failed to get destination city path value",
+			"failed to get destination city query parameter",
 		)
 		return
 	}
 
 	sort := core_http_request.GetSortTypeQueryParam(r, "sort")
 
-	routes, err := h.routesService.GetBestRoutes(ctx, fromCityID, toCityID, sort)
+	routes, err := h.routesService.GetBestRoutes(ctx, fromCity, toCity, sort)
 	if err != nil {
 		responseHandler.ErrorResponse(
 			err,

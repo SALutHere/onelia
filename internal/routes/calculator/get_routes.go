@@ -11,20 +11,23 @@ import (
 
 func (c *RoutesCalculator) GetRoutes(
 	ctx context.Context,
-	from, to uuid.UUID,
+	from, to string,
 	maxSegments int,
 ) ([]domain.Route, error) {
 	if err := ctx.Err(); err != nil {
 		return nil, err
 	}
-	for _, id := range []uuid.UUID{from, to} {
-		if _, ok := c.cities[id]; !ok {
-			return nil, fmt.Errorf("city %s: %w", id, core_errors.ErrNotFound)
-		}
+	fromID, ok := c.citiesByName[from]
+	if !ok {
+		return nil, fmt.Errorf("city %q: %w", from, core_errors.ErrNotFound)
+	}
+	toID, ok := c.citiesByName[to]
+	if !ok {
+		return nil, fmt.Errorf("city %q: %w", to, core_errors.ErrNotFound)
 	}
 
 	routes := make([]domain.Route, 0)
-	visited := map[uuid.UUID]bool{from: true}
+	visited := map[uuid.UUID]bool{fromID: true}
 	path := make([]domain.RoutePart, 0)
 	var walk func(uuid.UUID, int, int64) error
 	walk = func(city uuid.UUID, duration int, price int64) error {
@@ -32,7 +35,7 @@ func (c *RoutesCalculator) GetRoutes(
 			return err
 		}
 
-		if city == to && len(path) > 0 {
+		if city == toID && len(path) > 0 {
 			routes = append(routes, domain.Route{
 				Parts:                append([]domain.RoutePart(nil), path...),
 				TotalDurationMinutes: duration,
@@ -58,7 +61,7 @@ func (c *RoutesCalculator) GetRoutes(
 				duration+segment.DurationMinutes,
 				price+segment.Price,
 			); err != nil {
-				return nil
+				return err
 			}
 			path = path[:len(path)-1]
 			delete(visited, segment.ToCityID)
@@ -66,7 +69,7 @@ func (c *RoutesCalculator) GetRoutes(
 		return nil
 	}
 
-	if err := walk(from, 0, 0); err != nil {
+	if err := walk(fromID, 0, 0); err != nil {
 		return nil, err
 	}
 

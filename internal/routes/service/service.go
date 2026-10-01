@@ -2,7 +2,6 @@ package routes_service
 
 import (
 	"context"
-	"uuid"
 
 	"github.com/SALutHere/onelia/internal/core/domain"
 )
@@ -14,7 +13,7 @@ type RoutesService struct {
 type RoutesCalculator interface {
 	GetRoutes(
 		ctx context.Context,
-		from, to uuid.UUID,
+		from, to string,
 		maxSegments int,
 	) ([]domain.Route, error)
 }
